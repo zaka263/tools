@@ -1,3 +1,4 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>CNIC & Mobile Extractor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -262,7 +263,11 @@ select {
 .dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--console-dim); opacity: 0.7; }
 .dots i:first-child { background: #4dffb4; opacity: 0.9; }
 .tag { font: 500 11px var(--font-mono); color: var(--console-dim); letter-spacing: 0.12em; text-transform: uppercase; }
-.copy { width: 100%; padding: 12px 16px; font-size: 14px; }
+.actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.actions .btn { width: 100%; padding: 12px 16px; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; gap: 9px; }
+.actions .btn svg { width: 17px; height: 17px; flex: none; }
+.btn.dl { border-color: var(--accent); color: var(--accent-text); background: var(--accent-soft); }
+.btn.dl:hover { box-shadow: 0 0 20px var(--glow); }
 </style>
 
 <header class="top">
@@ -272,7 +277,7 @@ select {
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="11" r="2"/><path d="M6.5 16c.6-1.4 1.6-2 2.5-2s1.9.6 2.5 2M14 10h4M14 13.5h3"/></svg>
       </div>
       <div>
-        <h1>CNIC & Mobile Extractor</h1>
+        <h1>CNIC & Mobile Extractor V1.1</h1>
         <p class="by">by <b>Zaka ur Rahman</b></p>
       </div>
     </div>
@@ -350,7 +355,14 @@ select {
         </div>
         <textarea id="out" readonly spellcheck="false" aria-label="Extracted result" placeholder="Extracted values appear here."></textarea>
       </div>
-      <button class="btn primary copy" id="copy" type="button">Copy result</button>
+      <div class="actions">
+        <button class="btn primary" id="copy" type="button">Copy result</button>
+        <button class="btn dl" id="dl" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 19h14"/></svg>
+          Download Excel
+        </button>
+      </div>
+      <p class="note" id="dl-note" aria-live="polite"></p>
     </section>
   </div>
 </div>
@@ -391,6 +403,7 @@ function formatNumbers(list, fmt) {
 
 const $ = function (id) { return document.getElementById(id); };
 let mode = 'cnic';
+let lastList = [];
 
 /* theme: white by default, remembered if the viewer switches */
 function applyTheme(t) {
@@ -441,6 +454,7 @@ function run(nextMode) {
   const text = $('data').value;
   if (!text.trim()) {
     $('out').value = '';
+    lastList = [];
     showMessage('Paste data or choose a file first.', true);
     return;
   }
@@ -454,6 +468,7 @@ function run(nextMode) {
     out = formatNumbers(res.list, $('num-fmt').value);
   }
   $('out').value = out;
+  lastList = res.list.slice();
   const n = res.list.length;
   if (!n) {
     showMessage(isCnic
@@ -543,7 +558,9 @@ $('m-num').addEventListener('click', function () { run('num'); });
 $('clear').addEventListener('click', function () {
   $('data').value = '';
   $('out').value = '';
+  lastList = [];
   setNote('');
+  $('dl-note').textContent = '';
   $('sum').hidden = true;
 });
 $('data').addEventListener('input', function () { setNote(''); });
@@ -581,5 +598,55 @@ $('copy').addEventListener('click', async function () {
   }
 });
 
+/* Excel download: one column, no header, every value stored as text so Excel keeps all digits */
+function buildXlsx(list) {
+  const ws = XLSX.utils.aoa_to_sheet(list.map(function (v) { return [String(v)]; }));
+  ws['!cols'] = [{ wch: 22 }];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, mode === 'cnic' ? 'CNIC' : 'Numbers');
+  return XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+}
+
+function plainDownload(buf, filename) {
+  const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+}
+
+function dlNote(msg, isErr) {
+  const n = $('dl-note');
+  n.textContent = msg || '';
+  n.className = 'note' + (isErr ? ' err' : '');
+}
+
+$('dl').addEventListener('click', async function () {
+  if (!lastList.length) { dlNote('Nothing to download yet. Extract something first.', true); return; }
+  if (!window.XLSX) { dlNote('The Excel writer did not load. Check your internet connection and reload the page.', true); return; }
+  const filename = (mode === 'cnic' ? 'cnic-list' : 'mobile-numbers') + '.xlsx';
+  let buf;
+  try { buf = buildXlsx(lastList); } catch (e) { dlNote('Could not build the Excel file.', true); return; }
+  let dls = null;
+  try { dls = window.claude && window.claude.use ? await window.claude.use('downloads') : null; } catch (e) { dls = null; }
+  try {
+    if (dls) {
+      await dls.save({ filename: filename, data: buf });
+    } else {
+      plainDownload(buf, filename);
+    }
+    dlNote(filename + ' · ' + lastList.length.toLocaleString() + ' rows');
+  } catch (e) {
+    if (e && e.code === 'declined') dlNote('Download cancelled.');
+    else dlNote('Download was not allowed here. Use the standalone file to download.', true);
+  }
+});
+
 syncMode();
 </script>
+
+</body></html>
