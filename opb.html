@@ -6,69 +6,90 @@
 <title>One Page Perfoma Builder</title>
 <style>
   :root {
-    --bg: #f5f6f8; --surface: #ffffff; --ink: #1f2933; --muted: #6b7785; --line: #e3e7ec; --line-strong: #cfd6de;
-    --accent: #1e40af; --accent-hover: #1a3699; --accent-soft: #eaf0ff;
-    --ok-bg: #edf7f0; --ok-ink: #1e6b3a; --ok-line: #cfe8d7; --warn-bg: #fff7e6; --warn-ink: #8a5a00; --warn-line: #f3dfae;
+    --bg: #f4f6fb; --surface: #ffffff; --ink: #151b2c; --muted: #667085; --line: #e6e9f2; --line-strong: #d5dae7;
+    --accent: #4f46e5; --accent-2: #7c3aed; --accent-hover: #4338ca; --accent-soft: #eef0ff;
+    --ok-bg: #ecfdf3; --ok-ink: #067647; --ok-line: #abefc6; --warn-bg: #fffaeb; --warn-ink: #93370d; --warn-line: #fedf89;
+    --shadow-sm: 0 1px 2px rgba(16,24,40,.06); --shadow-md: 0 4px 16px rgba(16,24,40,.07), 0 1px 3px rgba(16,24,40,.05);
+    --shadow-lg: 0 20px 50px -12px rgba(30,27,75,.18), 0 2px 6px rgba(16,24,40,.06);
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; }
-  body { height: 100vh; display: flex; flex-direction: column; overflow: hidden; background: var(--bg); color: var(--ink);
-         font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+  body { height: 100vh; display: flex; flex-direction: column; overflow: hidden; color: var(--ink);
+         font: 14px/1.5 "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased;
+         background: radial-gradient(900px 420px at 85% -120px, rgba(124,58,237,.10), transparent 70%),
+                     radial-gradient(800px 420px at 5% -140px, rgba(79,70,229,.10), transparent 70%), var(--bg); background-attachment: fixed; }
+  body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+  .c { -webkit-user-select: text; user-select: text; }
+  img, canvas { -webkit-user-drag: none; user-drag: none; }
+  svg.i { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
   /* ---------- app chrome ---------- */
-  .bar { position: relative; z-index: 10; display: flex; align-items: center; gap: 8px; padding: 10px 24px; flex-wrap: wrap;
-         background: var(--surface); border-bottom: 1px solid var(--line); }
-  .brand { display: flex; align-items: center; gap: 10px; margin-right: 16px; }
-  .logo { width: 10px; height: 10px; border-radius: 2px; background: var(--accent); }
-  .bar h1 { font-size: 14px; font-weight: 600; margin: 0; letter-spacing: .01em; color: var(--ink); }
-  .bar h1 em { font-style: normal; font-weight: 400; color: var(--muted); }
+  .bar { position: relative; z-index: 10; display: flex; align-items: center; gap: 8px; padding: 12px 28px; flex-wrap: wrap;
+         background: rgba(255,255,255,.82); backdrop-filter: saturate(160%) blur(12px); -webkit-backdrop-filter: saturate(160%) blur(12px);
+         border-bottom: 1px solid var(--line); }
+  .brand { display: flex; align-items: center; gap: 12px; margin-right: 18px; }
+  .logo { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; color: #fff;
+          background: linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow: 0 6px 14px -4px rgba(79,70,229,.55); }
+  .logo svg.i { width: 17px; height: 17px; stroke-width: 2; }
+  .bar h1 { font-size: 15px; font-weight: 650; margin: 0; letter-spacing: -.01em; line-height: 1.15; }
+  .bar h1 small { display: block; font-size: 11px; font-weight: 500; color: var(--muted); letter-spacing: 0; }
   .bar .sp { flex: 1; }
-  button.btn { font: 500 13px/1 inherit; font-family: inherit; color: var(--ink); cursor: pointer; background: var(--surface);
-               border: 1px solid var(--line-strong); border-radius: 6px; padding: 8px 14px; transition: background .12s, border-color .12s, color .12s; }
-  button.btn:hover:not(:disabled) { background: #f3f5f8; border-color: #b9c2cd; }
-  button.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-  button.btn.primary:hover:not(:disabled) { background: var(--accent-hover); border-color: var(--accent-hover); }
-  button.btn.toggle[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
-  button.btn:disabled { opacity: .4; cursor: default; }
+  .bar .sep { width: 1px; height: 22px; background: var(--line-strong); margin: 0 6px; }
+  button.btn { display: inline-flex; align-items: center; gap: 8px; font: 550 13px/1 inherit; font-family: inherit; color: var(--ink); cursor: pointer;
+               background: var(--surface); border: 1px solid var(--line-strong); border-radius: 10px; padding: 9px 14px; box-shadow: var(--shadow-sm);
+               transition: background .15s, border-color .15s, color .15s, box-shadow .15s, transform .15s; }
+  button.btn:hover:not(:disabled) { background: #f8f9fd; border-color: #bfc6d8; box-shadow: var(--shadow-md); }
+  button.btn:active:not(:disabled) { transform: translateY(1px); }
+  button.btn.primary { color: #fff; border-color: transparent; background: linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow: 0 6px 16px -6px rgba(79,70,229,.7); }
+  button.btn.primary:hover:not(:disabled) { background: linear-gradient(135deg, var(--accent-hover), #6d28d9); border-color: transparent; box-shadow: 0 10px 22px -8px rgba(79,70,229,.8); }
+  button.btn.toggle[aria-pressed="true"] { background: var(--accent-soft); border-color: #c7cbff; color: var(--accent); }
+  button.btn.ghost { border-color: transparent; background: transparent; box-shadow: none; color: var(--muted); }
+  button.btn.ghost:hover:not(:disabled) { background: rgba(16,24,40,.05); color: var(--ink); box-shadow: none; border-color: transparent; }
+  button.btn:disabled { opacity: .45; cursor: default; box-shadow: none; }
   button.btn:focus-visible, .c:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-  .stage { position: relative; z-index: 1; flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 20px 24px 0; overflow: auto; }
+  .stage { position: relative; z-index: 1; flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 24px 28px 0; overflow: auto; }
   .stage > * { flex: none; }
-  .top { width: 100%; max-width: 1500px; margin: 0 auto; }
-  .drop { margin: 0 auto 12px; border-radius: 8px; padding: 14px 18px; color: var(--muted); background: var(--surface);
-          border: 1px dashed var(--line-strong); display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap;
-          transition: border-color .15s, background .15s; }
-  .drop .lead { display: flex; align-items: center; gap: 12px; }
-  .drop .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
-  .drop.over { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); }
-  .drop b { color: var(--ink); font-weight: 500; }
-  #fileInfo { font-size: 12px; color: var(--muted); }
-  .msg { margin: 0 auto 12px; padding: 9px 14px; border-radius: 8px; font-size: 13px; border: 1px solid; }
+  .top { width: 100%; max-width: 21cm; margin: 0 auto; }
+  .chip { display: inline-flex; align-items: center; gap: 8px; max-width: 380px; font-size: 12px; font-weight: 550; color: var(--accent); background: var(--accent-soft);
+          border: 1px solid #dfe2ff; border-radius: 999px; padding: 6px 12px 6px 10px; }
+  .chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chip[hidden] { display: none; }
+  .dropveil { position: fixed; inset: 0; z-index: 50; display: none; place-items: center; background: rgba(244,246,251,.78); backdrop-filter: blur(4px); pointer-events: none; }
+  .dropveil.over { display: grid; }
+  .dropveil .card { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 40px 64px; border-radius: 20px; background: var(--surface);
+                    border: 2px dashed var(--accent); box-shadow: var(--shadow-lg); font-size: 16px; font-weight: 600; }
+  .dropveil .card small { font-size: 12px; font-weight: 450; color: var(--muted); }
+  .dropveil .ico { width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
+  .dropveil .ico svg.i { width: 26px; height: 26px; }
+  .msg { margin: 0 auto 14px; padding: 10px 14px; border-radius: 12px; font-size: 13px; border: 1px solid; box-shadow: var(--shadow-sm); display: flex; align-items: flex-start; gap: 10px; }
+  .msg svg.i { margin-top: 2px; width: 17px; height: 17px; }
+  .stage.cmp .top { max-width: none; }
   .msg.warn { background: var(--warn-bg); color: var(--warn-ink); border-color: var(--warn-line); }
   .msg.ok { background: var(--ok-bg); color: var(--ok-ink); border-color: var(--ok-line); }
-  .msg:empty { display: none; }
+  .msg[hidden] { display: none; }
 
   /* ---------- work area: form alone, or PDF + form side by side ---------- */
   .work { width: 100%; margin: 0 auto; }
   .pdfpane { display: none; }
-  .pane-h { display: flex; justify-content: space-between; gap: 10px; padding: 10px 16px; font-size: 11px; font-weight: 600; letter-spacing: .08em;
-            text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--line); background: var(--surface); }
-  .pane-h b { color: var(--ink); font-weight: 500; letter-spacing: 0; text-transform: none; }
+  .pane-h { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 18px; font-size: 12px; font-weight: 650; color: var(--ink);
+            border-bottom: 1px solid var(--line); background: var(--surface); }
+  .pane-h b { color: var(--muted); font-weight: 500; font-size: 12px; }
   .formpane .pane-h { display: none; }
-  .work.compare { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: none; padding-bottom: 20px; }
+  .work.compare { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; max-width: none; padding-bottom: 24px; }
   .work.compare .pdfpane { display: flex; }
   .work.compare .formpane .pane-h { display: flex; }
-  .work.compare .pane { display: flex; flex-direction: column; min-height: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: #eceff3; }
-  .work.compare .pane-body { flex: 1; min-height: 0; overflow: auto; padding: 16px; }
-  .pdfpage { position: relative; margin: 0 auto 14px; width: max-content; max-width: 100%; background: #fff; box-shadow: 0 1px 2px rgba(16,24,40,.12), 0 4px 14px rgba(16,24,40,.08); }
-  .pdfpage canvas { display: block; max-width: 100%; }
-  .pdfpage span { position: absolute; right: 6px; top: 6px; font-size: 10px; background: rgba(31,41,51,.7); color: #fff; padding: 2px 7px; border-radius: 4px; }
-  .pane-body::-webkit-scrollbar, .stage::-webkit-scrollbar { width: 10px; height: 10px; }
-  .pane-body::-webkit-scrollbar-thumb, .stage::-webkit-scrollbar-thumb { background: #c4ccd6; border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
+  .work.compare .pane { display: flex; flex-direction: column; min-height: 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: #eceff7; box-shadow: var(--shadow-md); }
+  .work.compare .pane-body { flex: 1; min-height: 0; overflow: auto; padding: 18px; }
+  .pdfpage { position: relative; margin: 0 auto 16px; width: max-content; max-width: 100%; background: #fff; border-radius: 4px; box-shadow: var(--shadow-md); }
+  .pdfpage canvas { display: block; max-width: 100%; border-radius: 4px; }
+  .pdfpage span { position: absolute; right: 8px; top: 8px; font-size: 10px; font-weight: 600; background: rgba(21,27,44,.72); color: #fff; padding: 3px 8px; border-radius: 999px; }
+  .pane-body::-webkit-scrollbar, .stage::-webkit-scrollbar { width: 12px; height: 12px; }
+  .pane-body::-webkit-scrollbar-thumb, .stage::-webkit-scrollbar-thumb { background: #c5cbdc; border-radius: 10px; border: 3px solid transparent; background-clip: padding-box; }
 
   /* ---------- the paper (mirrors Format.docx: A4, 1.27cm margins, Arial Narrow 9pt) ---------- */
   .paper { width: 21cm; min-height: 29.7cm; margin: 0 auto 40px; background: #fff; padding: 1.27cm; color: #000;
-           box-shadow: 0 0 0 1px var(--line), 0 1px 2px rgba(16,24,40,.06), 0 8px 28px rgba(16,24,40,.08);
+           border-radius: 4px; box-shadow: var(--shadow-lg);
            font-family: "Arial Narrow", "Liberation Sans Narrow", "Roboto Condensed", Arial, sans-serif; font-size: 9pt; line-height: 1.25; }
   .paper table { width: 100%; border-collapse: collapse; table-layout: fixed; margin: 0; }
   .paper th, .paper td { border: .5pt solid #000; padding: 2pt 4pt; vertical-align: top; text-align: left; position: relative;
@@ -103,7 +124,7 @@
     .work, .work.compare { display: block; padding: 0; }
     .work.compare .pane { border: 0; background: none; display: block; }
     .work.compare .pane-body { overflow: visible; padding: 0; }
-    .paper { width: auto; min-height: 0; margin: 0; padding: 0; box-shadow: none; zoom: 1 !important; }
+    .paper { width: auto; min-height: 0; margin: 0; padding: 0; box-shadow: none; border-radius: 0; zoom: 1 !important; }
     .c:hover, .c:focus { background: none; }
     .paper th, .paper td { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   }
@@ -112,24 +133,22 @@
 <body>
 
 <header class="bar noprint">
-  <div class="brand"><span class="logo" aria-hidden="true"></span><h1>One Page Perfoma <em>Builder</em></h1></div>
-  <button class="btn primary" id="btnOpen">Open PDF</button>
+  <div class="brand"><span class="logo"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg></span><h1>One Page Perfoma<small>Builder</small></h1></div>
+  <button class="btn primary" id="btnOpen" title="Save the PDF in Portrait format from AIES, then open it here (or drop it anywhere on this page)"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="t">Open PDF</span></button>
   <input type="file" id="file" accept="application/pdf,.pdf" hidden>
-  <button class="btn toggle" id="btnCompare" aria-pressed="false" disabled title="Show the original PDF next to the form">Compare PDF</button>
+  <button class="btn toggle" id="btnCompare" aria-pressed="false" disabled title="Show the original PDF next to the form"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16"/></svg><span class="t">Compare PDF</span></button>
+  <span class="chip" id="fileChip" hidden><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg><span id="fileInfo"></span></span>
   <span class="sp"></span>
-  <button class="btn" id="btnDoc" title="Download as Word document">Word (.doc)</button>
-  <button class="btn" id="btnPdf" title="Opens the print dialog — choose “Save as PDF”">PDF</button>
-  <button class="btn" id="btnClear" title="Start over with an empty form">Clear</button>
+  <button class="btn" id="btnDoc" title="Download as Word document"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v12"/><path d="m7 11 5 5 5-5"/><path d="M5 20h14"/></svg><span class="t">Word</span></button>
+  <button class="btn" id="btnPdf" title="Opens the print dialog — choose “Save as PDF”"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg><span class="t">PDF</span></button>
+  <span class="sep" aria-hidden="true"></span>
+  <button class="btn ghost" id="btnClear" title="Start over with an empty form"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/></svg><span class="t">Clear</span></button>
 </header>
 
 <main class="stage">
   <div class="top noprint">
-    <div class="drop" id="drop">
-      <span class="lead"><span class="dot" aria-hidden="true"></span><span><b>Save PDF in Portrait format from AIES and drop here..</b></span></span>
-      <span id="fileInfo"></span>
-    </div>
-    <div class="msg warn" id="warn"></div>
-    <div class="msg ok" id="ok"></div>
+    <div class="msg warn" id="warn" hidden></div>
+    <div class="msg ok" id="ok" hidden></div>
   </div>
   <div class="work" id="work">
     <section class="pane pdfpane noprint" id="pdfPane">
@@ -143,6 +162,37 @@
   </div>
 </main>
 
+<div class="dropveil noprint" id="drop"><div class="card"><span class="ico"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M5 20h14"/></svg></span>Drop the AIES PDF to load it<small>Portrait format · text-based PDF</small></div></div>
+
+<script>
+/* ---------- content protection (deterrent only) ----------
+   Blocks the right-click menu, the usual developer-tools / view-source / save shortcuts, and copy / cut / drag-out
+   of anything on the page. Typing, pasting INTO the form, Word/PDF export and printing keep working.
+   Set PROTECT = false to switch it off. */
+(function () {
+  'use strict';
+  var PROTECT = true;
+  if (!PROTECT) return;
+  function stop(e) { e.preventDefault(); e.stopPropagation(); return false; }
+  function inCell(t) { return !!(t && t.closest && t.closest('.c')); }
+
+  ['contextmenu', 'copy', 'cut', 'dragstart'].forEach(function (ev) { document.addEventListener(ev, stop, true); });
+  document.addEventListener('selectstart', function (e) { if (!inCell(e.target)) e.preventDefault(); }, true);
+  document.addEventListener('mousedown', function (e) { if (e.detail > 1 && !inCell(e.target)) e.preventDefault(); }, true);   // no double/triple-click select
+
+  document.addEventListener('keydown', function (e) {
+    var k = (e.key || '').toLowerCase(), mod = e.ctrlKey || e.metaKey, blocked = false;
+    if (e.key === 'F12') blocked = true;                                           // developer tools
+    else if (mod && e.shiftKey && 'ijckm'.indexOf(k) >= 0 && k.length === 1) blocked = true;   // inspect / console / picker / (Firefox) responsive
+    else if (e.metaKey && e.altKey && 'iujc'.indexOf(k) >= 0 && k.length === 1) blocked = true; // macOS: Cmd+Opt+I/J/U/C
+    else if (mod && (k === 'u' || k === 's')) blocked = true;                      // view source / save page
+    else if (mod && (k === 'c' || k === 'x' || k === 'insert')) blocked = true;    // copy / cut
+    else if (e.shiftKey && e.key === 'Delete') blocked = true;                     // cut
+    else if (mod && k === 'a' && !inCell(e.target)) blocked = true;                // select-all outside the form cells
+    if (blocked) stop(e);
+  }, true);
+})();
+</script>
 <script>/**
  * @licstart The following is the entire license notice for the
  * JavaScript code in this page
@@ -228,8 +278,10 @@
     return lines;
   }
 
-  function isNoise(it) {
+  function isNoise(it, totalPages) {
     var s = it.s.trim();
+    // page counter such as "3/6" printed by the browser, wherever it lands on the page
+    if (s === it.p + '/' + totalPages) return true;
     if (/^\d{1,2}\/\d{1,2}\/\d{2,4},\s*\d{1,2}:\d{2}\s*[AP]M$/i.test(s)) return true;
     if (/^CTD\s*\|/i.test(s)) return true;
     if (/^(https?:\/\/)?www\.aies\./i.test(s)) return true;
@@ -369,6 +421,7 @@
   }
 
   function parse(rawItems) {
+    var totalPages = rawItems.reduce(function (m, it) { return Math.max(m, it.p); }, 1);
     var items = rawItems
       .map(function (it) {
         // strip icon-font / private-use / zero-width characters that precede some headings
@@ -376,7 +429,7 @@
         return { p: it.p, x: it.x, y: it.y, w: it.w, h: it.h, s: s, Y: it.p * 10000 + it.y };
       })
       .filter(function (it) { return it.s.trim(); })
-      .filter(function (it) { return !isNoise(it); });
+      .filter(function (it) { return !isNoise(it, totalPages); });
 
     var scale = (median(items.map(function (i) { return i.h; }).filter(Boolean)) || 10.5) / 10.5;
     var pre = {};
@@ -613,8 +666,14 @@
   });
 
   /* ---------- PDF -> data ---------- */
-  var warn = document.getElementById('warn'), ok = document.getElementById('ok'), info = document.getElementById('fileInfo');
-  function say(w, o) { warn.textContent = w || ''; ok.textContent = o || ''; }
+  var warn = document.getElementById('warn'), ok = document.getElementById('ok'), info = document.getElementById('fileInfo'), chip = document.getElementById('fileChip');
+  var IC_WARN = '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2.5 20h19z"/><path d="M12 10v4M12 17.2v.01"/></svg>', IC_OK = '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.8 2.8L16 9.8"/></svg>';
+  function esc2(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function say(w, o) {
+    warn.innerHTML = w ? IC_WARN + '<span>' + esc2(w) + '</span>' : ''; warn.hidden = !w;
+    ok.innerHTML = o ? IC_OK + '<span>' + esc2(o) + '</span>' : ''; ok.hidden = !o;
+  }
+  function setInfo(t) { info.textContent = t; chip.hidden = !t; }
 
   async function readPdf(file) {
     var buf = new Uint8Array(await file.arrayBuffer());
@@ -662,8 +721,9 @@
     comparing = !!on && !!currentDoc;
     work.classList.toggle('compare', comparing);
     stage.style.overflow = comparing ? 'hidden' : '';
+    stage.classList.toggle('cmp', comparing);
     btnCompare.setAttribute('aria-pressed', String(comparing));
-    btnCompare.textContent = comparing ? 'Hide PDF' : 'Compare PDF';
+    btnCompare.querySelector('.t').textContent = comparing ? 'Hide PDF' : 'Compare PDF';
     fitPaper();
     if (comparing) renderPdfPane(); else { renderToken++; pdfBody.innerHTML = ''; }
   }
@@ -682,7 +742,7 @@
       data = parsed;
       baseName = 'OnePagePerfoma_' + (data.name || 'unnamed').replace(/[^A-Za-z0-9]+/g, '_') + (data.mobile ? '_' + data.mobile : '');
       render();
-      info.textContent = file.name + ' · ' + r.pages + (r.pages === 1 ? ' page' : ' pages');
+      setInfo(file.name + ' · ' + r.pages + (r.pages === 1 ? ' page' : ' pages'));
       say(warns.join(' '), warns.length ? '' :
         'Filled from PDF: ' + data.devices.length + ' device(s) · ' + data.fav.length + ' favourite caller(s) · ' + data.db.length +
         ' DB match(es) · ' + data.loc.length + ' location(s) · ' + data.cur.length + ' current location(s). Check the values, edit anything, then download.');
@@ -698,10 +758,15 @@
   var fileInput = document.getElementById('file');
   document.getElementById('btnOpen').onclick = function () { fileInput.value = ''; fileInput.click(); };
   fileInput.onchange = function () { handleFile(fileInput.files[0]); };
-  var drop = document.getElementById('drop');
-  ['dragenter', 'dragover'].forEach(function (ev) { window.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add('over'); }); });
-  ['dragleave', 'drop'].forEach(function (ev) { window.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.remove('over'); }); });
-  window.addEventListener('drop', function (e) { var f = e.dataTransfer && e.dataTransfer.files[0]; if (f) handleFile(f); });
+  var drop = document.getElementById('drop'), dragDepth = 0;
+  function hasFiles(e) { return e.dataTransfer && Array.prototype.indexOf.call(e.dataTransfer.types || [], 'Files') >= 0; }
+  window.addEventListener('dragenter', function (e) { if (!hasFiles(e)) return; e.preventDefault(); dragDepth++; drop.classList.add('over'); });
+  window.addEventListener('dragover', function (e) { if (hasFiles(e)) e.preventDefault(); });
+  window.addEventListener('dragleave', function (e) { if (!hasFiles(e)) return; dragDepth = Math.max(0, dragDepth - 1); if (!dragDepth) drop.classList.remove('over'); });
+  window.addEventListener('drop', function (e) {
+    e.preventDefault(); dragDepth = 0; drop.classList.remove('over');
+    var f = e.dataTransfer && e.dataTransfer.files[0]; if (f) handleFile(f);
+  });
 
   /* ---------- downloads ---------- */
   function download(name, blob) {
@@ -746,7 +811,7 @@
   };
   document.getElementById('btnClear').onclick = function () {
     if (!confirm('Clear the form and start over?')) return;
-    data = emptyData(); baseName = 'OnePagePerfoma'; info.textContent = ''; say(''); render();
+    data = emptyData(); baseName = 'OnePagePerfoma'; setInfo(''); say(''); render();
     currentDoc = null; btnCompare.disabled = true; pdfName.textContent = ''; setCompare(false);
   };
 
